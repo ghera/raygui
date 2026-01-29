@@ -1636,12 +1636,12 @@ int GuiWindowBox(Rectangle bounds, const char *title)
     // Draw window close button
     int tempBorderWidth = GuiGetStyle(BUTTON, BORDER_WIDTH);
     int tempTextAlignment = GuiGetStyle(BUTTON, TEXT_ALIGNMENT);
-    GuiSetStyle(BUTTON, BORDER_WIDTH, 1);
+    GuiSetStyle(BUTTON, BORDER_WIDTH, 0);
     GuiSetStyle(BUTTON, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
 #if defined(RAYGUI_NO_ICONS)
     result = GuiButton(closeButtonRec, "x");
 #else
-    result = GuiButton(closeButtonRec, GuiIconText(ICON_CROSS_SMALL, NULL));
+    result = GuiButton(closeButtonRec, GuiIconText(ICON_CROSS, NULL));
 #endif
     GuiSetStyle(BUTTON, BORDER_WIDTH, tempBorderWidth);
     GuiSetStyle(BUTTON, TEXT_ALIGNMENT, tempTextAlignment);
