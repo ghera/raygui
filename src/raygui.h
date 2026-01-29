@@ -1892,7 +1892,9 @@ int GuiScrollPanel(Rectangle bounds, const char *text, Rectangle content, Vector
         if (CheckCollisionPointRec(mousePoint, bounds))
         {
             if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) state = STATE_PRESSED;
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
 
 #if defined(SUPPORT_SCROLLBAR_KEY_INPUT)
             if (hasHorizontalScrollBar)
@@ -2008,7 +2010,9 @@ int GuiButton(Rectangle bounds, const char *text)
         if (CheckCollisionPointRec(mousePoint, bounds))
         {
             if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) state = STATE_PRESSED;
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
 
             if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) result = 1;
         }
@@ -2046,7 +2050,9 @@ int GuiLabelButton(Rectangle bounds, const char *text)
         if (CheckCollisionPointRec(mousePoint, bounds))
         {
             if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) state = STATE_PRESSED;
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
 
             if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) pressed = true;
         }
@@ -2085,7 +2091,9 @@ int GuiToggle(Rectangle bounds, const char *text, bool *active)
                 state = STATE_NORMAL;
                 *active = !(*active);
             }
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
         }
     }
     //--------------------------------------------------------------------
@@ -2196,7 +2204,9 @@ int GuiToggleSlider(Rectangle bounds, const char *text, int *active)
                 (*active)++;
                 result = 1;
             }
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
         }
 
         if ((*active) && (state != STATE_FOCUSED)) state = STATE_PRESSED;
@@ -2269,7 +2279,9 @@ int GuiCheckBox(Rectangle bounds, const char *text, bool *checked)
         if (CheckCollisionPointRec(mousePoint, totalBounds))
         {
             if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) state = STATE_PRESSED;
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
 
             if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
             {
@@ -2336,7 +2348,9 @@ int GuiComboBox(Rectangle bounds, const char *text, int *active)
             }
 
             if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) state = STATE_PRESSED;
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
         }
     }
     //--------------------------------------------------------------------
@@ -2438,7 +2452,9 @@ int GuiDropdownBox(Rectangle bounds, const char *text, int *active, bool editMod
                     result = 1;
                     state = STATE_PRESSED;
                 }
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
                 else state = STATE_FOCUSED;
+#endif
             }
         }
     }
@@ -2982,7 +2998,9 @@ int GuiSpinner(Rectangle bounds, const char *text, int *value, int minValue, int
         if (CheckCollisionPointRec(mousePoint, bounds))
         {
             if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) state = STATE_PRESSED;
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
         }
     }
 
@@ -3355,7 +3373,9 @@ int GuiSlider(Rectangle bounds, const char *textLeft, const char *textRight, flo
                     *value = (maxValue - minValue)*((mousePoint.x - bounds.x - sliderWidth/2)/(bounds.width - sliderWidth)) + minValue;
                 }
             }
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
         }
 
         if (*value > maxValue) *value = maxValue;
@@ -3542,7 +3562,9 @@ int GuiDummyRec(Rectangle bounds, const char *text)
         if (CheckCollisionPointRec(mousePoint, bounds))
         {
             if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) state = STATE_PRESSED;
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
         }
     }
     //--------------------------------------------------------------------
@@ -3800,7 +3822,9 @@ int GuiColorBarAlpha(Rectangle bounds, const char *text, float *alpha)
                 if (*alpha >= 1.0f) *alpha = 1.0f;
                 //selector.x = bounds.x + (int)(((alpha - 0)/(100 - 0))*(bounds.width - 2*GuiGetStyle(SLIDER, BORDER_WIDTH))) - selector.width/2;
             }
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
         }
     }
     //--------------------------------------------------------------------
@@ -3885,7 +3909,9 @@ int GuiColorBarHue(Rectangle bounds, const char *text, float *hue)
                 if (*hue >= 359.0f) *hue = 359.0f;
 
             }
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
 
             /*if (IsKeyDown(KEY_UP))
             {
@@ -4059,7 +4085,9 @@ int GuiColorPanelHSV(Rectangle bounds, const char *text, Vector3 *colorHsv)
                 colorHsv->y = colorPick.x;
                 colorHsv->z = 1.0f - colorPick.y;
             }
+#if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
             else state = STATE_FOCUSED;
+#endif
         }
     }
     //--------------------------------------------------------------------
