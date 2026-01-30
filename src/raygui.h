@@ -1620,8 +1620,8 @@ int GuiWindowBox(Rectangle bounds, const char *title)
     if (bounds.height < statusBarHeight*2.0f) bounds.height = statusBarHeight*2.0f;
 
     const float vPadding = statusBarHeight/2.0f - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT/2.0f;
-    Rectangle windowPanel = { bounds.x, bounds.y + (float)statusBarHeight - statusBorderWidth, bounds.width, bounds.height - (float)statusBarHeight + statusBorderWidth };
-    Rectangle closeButtonRec = { statusBar.x + statusBar.width - statusBorderWidth - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT - vPadding,
+    Rectangle windowPanel = { bounds.x, bounds.y + (float)statusBarHeight - (float)statusBorderWidth, bounds.width, bounds.height - (float)statusBarHeight + (float)statusBorderWidth };
+    Rectangle closeButtonRec = { statusBar.x + statusBar.width - (float)statusBorderWidth - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT - vPadding,
                                  statusBar.y + vPadding, RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT, RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT };
 
     // Update control
@@ -1631,8 +1631,8 @@ int GuiWindowBox(Rectangle bounds, const char *title)
 
     // Draw control
     //--------------------------------------------------------------------
-    GuiStatusBar(statusBar, title); // Draw window header as status bar
     GuiPanel(windowPanel, NULL);    // Draw window base
+    GuiStatusBar(statusBar, title); // Draw window header as status bar
 
     // Draw window close button
     int tempBorderWidth = GuiGetStyle(BUTTON, BORDER_WIDTH);
