@@ -1614,13 +1614,14 @@ int GuiWindowBox(Rectangle bounds, const char *title)
     //GuiState state = guiState;
 
     int statusBarHeight = RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT;
+	int statusBorderWidth = GuiGetStyle(STATUSBAR, BORDER_WIDTH);
 
     Rectangle statusBar = { bounds.x, bounds.y, bounds.width, (float)statusBarHeight };
     if (bounds.height < statusBarHeight*2.0f) bounds.height = statusBarHeight*2.0f;
 
     const float vPadding = statusBarHeight/2.0f - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT/2.0f;
-    Rectangle windowPanel = { bounds.x, bounds.y + (float)statusBarHeight - 1, bounds.width, bounds.height - (float)statusBarHeight + 1 };
-    Rectangle closeButtonRec = { statusBar.x + statusBar.width - GuiGetStyle(STATUSBAR, BORDER_WIDTH) - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT - vPadding,
+    Rectangle windowPanel = { bounds.x, bounds.y + (float)statusBarHeight - statusBorderWidth, bounds.width, bounds.height - (float)statusBarHeight + statusBorderWidth };
+    Rectangle closeButtonRec = { statusBar.x + statusBar.width - statusBorderWidth - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT - vPadding,
                                  statusBar.y + vPadding, RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT, RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT };
 
     // Update control
