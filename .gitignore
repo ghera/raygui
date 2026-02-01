@@ -62,3 +62,7 @@
 *.log
 
 build
+
+#MacOS
+.DS_Store
+
