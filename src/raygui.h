@@ -1668,10 +1668,10 @@ int GuiRoundedWindowBox(Rectangle bounds, const char *title, float roundness, in
 
     int statusBarHeight = RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT;
 
-    if (bounds.height < statusBarHeight*2.0f) bounds.height = statusBarHeight*2.0f;
+    if (bounds.height < statusBarHeight * 2.0f) bounds.height = statusBarHeight * 2.0f;
 
     Rectangle statusBar = { bounds.x, bounds.y, bounds.width, (float)statusBarHeight };
-    const float vPadding = statusBarHeight/2.0f - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT/2.0f;
+    const float vPadding = statusBarHeight / 2.0f - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT / 2.0f;
     Rectangle closeButtonRec = { statusBar.x + statusBar.width - borderWidth - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT - vPadding,
                                  statusBar.y + vPadding, RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT, RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT };
 
@@ -1687,6 +1687,14 @@ int GuiRoundedWindowBox(Rectangle bounds, const char *title, float roundness, in
     Color borderColor = GetColor(GuiGetStyle(DEFAULT, LINE_COLOR));
     Color statusBarTextColor = GetColor(GuiGetStyle(STATUSBAR, TEXT_COLOR_NORMAL));
 
+    // MSAA pixel bleeding prevention: expand base rect to cover MSAA sampling area
+    if (baseColor.a > 0) {
+        float bleedMargin = fmaxf(1.0f, borderWidth / 2.0f);
+        Rectangle expandedBounds = { bounds.x - bleedMargin, bounds.y - bleedMargin,
+                                     bounds.width + bleedMargin * 2.0f, bounds.height + bleedMargin * 2.0f };
+        DrawRectangleRounded(expandedBounds, actualRoundness, segments, baseColor);
+    }
+
     // Draw window background
     DrawRectangleRounded(bounds, actualRoundness, segments, baseColor);
     DrawRectangleRoundedLinesEx(bounds, actualRoundness, segments, borderWidth, borderColor);
@@ -1697,7 +1705,7 @@ int GuiRoundedWindowBox(Rectangle bounds, const char *title, float roundness, in
                (float)borderWidth, borderColor);
 
     // Draw title text
-    float titleHPadding = (statusBar.height - GuiGetStyle(DEFAULT, TEXT_SIZE)) / 2.0f + statusBarHeight * roundness * 0.5F;
+    float titleHPadding = (statusBar.height - GuiGetStyle(DEFAULT, TEXT_SIZE)) / 2.0f + statusBarHeight * roundness * 0.5f;
     Rectangle textBounds = { statusBar.x + borderWidth + titleHPadding, statusBar.y, statusBar.width - 2.0f * (titleHPadding + borderWidth), statusBar.height };
     if (!hideCloseButton) textBounds.width -= (RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT + vPadding);
     GuiDrawText(title, textBounds, TEXT_ALIGN_LEFT, statusBarTextColor);
@@ -2470,9 +2478,20 @@ int GuiRoundedButton(Rectangle bounds, const char* text, float borderWidth, floa
 
     // Draw control
     //--------------------------------------------------------------------
-    DrawRectangleRounded(bounds, roundness, segments, GetColor(GuiGetStyle(BUTTON, BASE_COLOR_NORMAL + (state*3))));
-    DrawRectangleRoundedLinesEx(bounds, roundness, segments, borderWidth, GetColor(GuiGetStyle(BUTTON, BORDER_COLOR_NORMAL + (state*3))));
-    GuiDrawText(text, GetTextBounds(BUTTON, bounds), GuiGetStyle(BUTTON, TEXT_ALIGNMENT), GetColor(GuiGetStyle(BUTTON, TEXT + (state*3))));
+    Color baseColor = GetColor(GuiGetStyle(BUTTON, BASE_COLOR_NORMAL + (state * 3)));
+    Color borderColor = GetColor(GuiGetStyle(BUTTON, BORDER_COLOR_NORMAL + (state * 3)));
+
+    // MSAA pixel bleeding prevention: expand base rect to cover MSAA sampling area
+    if (baseColor.a > 0) {
+        float bleedMargin = fmaxf(1.0f, borderWidth / 2.0f);
+        Rectangle expandedBounds = { bounds.x - bleedMargin, bounds.y - bleedMargin,
+                                     bounds.width + bleedMargin * 2.0f, bounds.height + bleedMargin * 2.0f };
+        DrawRectangleRounded(expandedBounds, roundness, segments, baseColor);
+    }
+
+    DrawRectangleRounded(bounds, roundness, segments, baseColor);
+    DrawRectangleRoundedLinesEx(bounds, roundness, segments, borderWidth, borderColor);
+    GuiDrawText(text, GetTextBounds(BUTTON, bounds), GuiGetStyle(BUTTON, TEXT_ALIGNMENT), GetColor(GuiGetStyle(BUTTON, TEXT + (state * 3))));
 
     if (state == STATE_FOCUSED) GuiTooltip(bounds);
     //------------------------------------------------------------------
