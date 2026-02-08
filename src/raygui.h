@@ -1687,7 +1687,7 @@ int GuiRoundedWindowBox(Rectangle bounds, const char* title, float roundness, in
     Color statusBarTextColor = GetColor(GuiGetStyle(STATUSBAR, TEXT_COLOR_NORMAL));
 
     // MSAA pixel bleeding prevention: expand base rect to cover MSAA sampling area
-    float bleedMargin = 1.0f;
+    float bleedMargin = 1.0f / GetWindowScaleDPI().x;
     Rectangle expandedBounds = {bounds.x - bleedMargin, bounds.y - bleedMargin,
                                 bounds.width + bleedMargin * 2.0f, bounds.height + bleedMargin * 2.0f};
     DrawRectangleRounded(expandedBounds, actualRoundness, segments, baseColor);
@@ -2127,7 +2127,7 @@ int GuiRoundedButton(Rectangle bounds, const char* text, float borderWidth, floa
     Color borderColor = GetColor(GuiGetStyle(BUTTON, BORDER_COLOR_NORMAL + (state * 3)));
 
     // MSAA pixel bleeding prevention: expand base rect to cover MSAA sampling area
-    float bleedMargin = 1.0f;
+    float bleedMargin = 1.0f / GetWindowScaleDPI().x;
     Rectangle expandedBounds = {bounds.x - bleedMargin, bounds.y - bleedMargin,
                                 bounds.width + bleedMargin * 2.0f, bounds.height + bleedMargin * 2.0f};
     DrawRectangleRounded(expandedBounds, roundness, segments, baseColor);
