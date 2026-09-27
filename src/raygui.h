@@ -837,7 +837,7 @@ RAYGUIAPI int GuiScrollPanel(Rectangle bounds, const char *text, Rectangle conte
 // Basic controls set
 RAYGUIAPI int GuiLabel(Rectangle bounds, const char *text);                                            // Label control
 RAYGUIAPI int GuiButton(Rectangle bounds, const char *text);                                           // Button control, returns true when clicked
-RAYGUIAPI int GuiRoundedButton(Rectangle bounds, const char* text, float borderWidth, float roundness, int segments); // Rounded Button control, returns true when clicked
+RAYGUIAPI int GuiRoundedButton(Rectangle bounds, const char *text, float borderWidth, float roundness, int segments); // Rounded Button control, returns true when clicked
 RAYGUIAPI int GuiLabelButton(Rectangle bounds, const char *text);                                      // Label button control, returns true when clicked
 RAYGUIAPI int GuiToggle(Rectangle bounds, const char *text, bool *active);                             // Toggle Button control
 RAYGUIAPI int GuiToggleGroup(Rectangle bounds, const char *text, int *active);                         // Toggle Group control
@@ -1767,16 +1767,11 @@ int GuiWindowBox(Rectangle bounds, const char *title)
 }
 
 // Rounded Window Box control
-int GuiRoundedWindowBox(Rectangle bounds, const char* title, float roundness, int segments, float borderWidth, bool hideCloseButton) {
-#if !defined(RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT)
-#define RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT 24
-#endif
-
-#if !defined(RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT)
-#define RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT 18
-#endif
-
-    int result = 0;
+// NOTE: RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT and RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT are defined by GuiWindowBox()
+int GuiRoundedWindowBox(Rectangle bounds, const char *title, float roundness, int segments, float borderWidth, bool hideCloseButton)
+{
+    int result = RESULT_NONE;
+    GuiState state = guiState;
 
     int statusBarHeight = RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT;
 
@@ -1795,9 +1790,10 @@ int GuiRoundedWindowBox(Rectangle bounds, const char* title, float roundness, in
 
     // Draw control
     //--------------------------------------------------------------------
-    Color baseColor = GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR));
-    Color borderColor = GetColor(GuiGetStyle(DEFAULT, LINE_COLOR));
-    Color statusBarTextColor = GetColor(GuiGetStyle(STATUSBAR, TEXT_COLOR_NORMAL));
+    // NOTE: Colors follow GuiPanel()/GuiStatusBar() conventions, disabled state included
+    Color baseColor = GetColor(GuiGetStyle(DEFAULT, (state == STATE_DISABLED)? (int)BASE_COLOR_DISABLED : (int)BACKGROUND_COLOR));
+    Color borderColor = GetColor(GuiGetStyle(DEFAULT, (state == STATE_DISABLED)? (int)BORDER_COLOR_DISABLED : (int)LINE_COLOR));
+    Color statusBarTextColor = GetColor(GuiGetStyle(STATUSBAR, (state == STATE_DISABLED)? (int)TEXT_COLOR_DISABLED : (int)TEXT_COLOR_NORMAL));
 
     // MSAA pixel bleeding prevention: expand base rect to cover MSAA sampling area
     float bleedMargin = 1.0f / GetWindowScaleDPI().x;
@@ -1814,7 +1810,7 @@ int GuiRoundedWindowBox(Rectangle bounds, const char* title, float roundness, in
     float titleHPadding = (statusBar.height - GuiGetStyle(DEFAULT, TEXT_SIZE)) / 2.0f + statusBarHeight * roundness * 0.5f;
     Rectangle textBounds = {statusBar.x + borderWidth + titleHPadding, statusBar.y, statusBar.width - 2.0f * (titleHPadding + borderWidth), statusBar.height};
     if (!hideCloseButton) textBounds.width -= (RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT + vPadding);
-    GuiDrawText(title, textBounds, TEXT_ALIGN_LEFT, statusBarTextColor);
+    GuiDrawText(title, textBounds, GuiGetStyle(STATUSBAR, TEXT_ALIGNMENT), statusBarTextColor);
 
     if (!hideCloseButton) {
         int tempTextAlignment = GuiGetStyle(BUTTON, TEXT_ALIGNMENT);
@@ -2137,24 +2133,24 @@ int GuiButton(Rectangle bounds, const char *text)
 }
 
 // Rounded Button control
-int GuiRoundedButton(Rectangle bounds, const char* text, float borderWidth, float roundness, int segments) {
-    int result = 0;
+int GuiRoundedButton(Rectangle bounds, const char *text, float borderWidth, float roundness, int segments)
+{
+    int result = RESULT_NONE;
     GuiState state = guiState;
 
     // Update control
     //--------------------------------------------------------------------
     if ((state != STATE_DISABLED) && !guiLocked && !guiControlExclusiveMode) {
-        Vector2 mousePoint = GetMousePosition();
+        Vector2 mousePoint = GUI_POINTER_POSITION;
 
         // Check button state
         if (CheckCollisionPointRec(mousePoint, bounds)) {
             if (GUI_BUTTON_DOWN) state = STATE_PRESSED;
 #if !defined(PLATFORM_ANDROID) && !defined(PLATFORM_IOS)
-            else
-                state = STATE_FOCUSED;
+            else state = STATE_FOCUSED;
 #endif
 
-            if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) result = 1;
+            if (GUI_BUTTON_RELEASED) result = RESULT_PRESSED;
         }
     }
     //--------------------------------------------------------------------
