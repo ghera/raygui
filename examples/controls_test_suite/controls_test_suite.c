@@ -38,7 +38,7 @@
 //#define RAYGUI_DEBUG_RECS_BOUNDS
 //#define RAYGUI_DEBUG_TEXT_BOUNDS
 
-//#define RAYGUI_FONT_ICONS_BAKING
+#define RAYGUI_FONT_ICONS_BAKING
 #define RAYGUI_IMPLEMENTATION
 //#define RAYGUI_CUSTOM_ICONS     // It requires providing gui_icons.h in the same directory
 //#include "gui_icons.h"          // External icons data provided, it can be generated with rGuiIcons tool
@@ -58,6 +58,12 @@
 #include "../styles/style_sunny.h"             // raygui style: sunny
 #include "../styles/style_amber.h"             // raygui style: amber
 #include "../styles/style_genesis.h"           // raygui style: genesis
+#include "../styles/style_brick.h"           // raygui style: genesis
+#include "../styles/style_turbo.h"           // raygui style: genesis
+#include "../styles/style_wisteria.h"           // raygui style: genesis
+#include "../styles/style_advance.h"           // raygui style: genesis
+#include "../styles/style_rltech.h"           // raygui style: genesis
+#include "../styles/style_pocket.h"           // raygui style: genesis
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -74,8 +80,6 @@ int main()
 
     // GUI controls initialization
     //----------------------------------------------------------------------------------
-    char *tabNames[] = { "#124#TAB_01", "#98#TAB_02", "#217#TAB_03", "#56#TAB_04", "#24#TAB_05", "#12#TAB_06" };
-    int tabCount = 6;
     int tabActive = 0;
 
     int dropdownBox000Active = 0;
@@ -141,6 +145,8 @@ int main()
     //GuiSetStyle(DEFAULT, TEXT_PADDING, 0);
     //GuiSetStyle(DEFAULT, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
 
+    int frameCounter = 0;
+
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
 
@@ -176,6 +182,16 @@ int main()
         if (progressValue > 1.0f) progressValue = 1.0f;
         else if (progressValue < 0.0f) progressValue = 0.0f;
 
+        /*
+        // Style updater auto
+        frameCounter++;
+        if ((frameCounter > 300) && (frameCounter%60) == 0)
+        {
+            visualStyleActive++;
+            if (visualStyleActive >= 20) visualStyleActive = 0;
+        }
+        */
+
         if (visualStyleActive != prevVisualStyleActive)
         {
             GuiLoadStyleDefault();
@@ -196,6 +212,12 @@ int main()
                 case 11: GuiLoadStyleSunny(); break;
                 case 12: GuiLoadStyleAmber(); break;
                 case 13: GuiLoadStyleGenesis(); break;
+                case 14: GuiLoadStyleBrick(); break;
+                case 15: GuiLoadStylePocket(); break;
+                case 16: GuiLoadStyleTurbo(); break;
+                case 17: GuiLoadStyleWisteria(); break;
+                case 18: GuiLoadStyleAdvance(); break;
+                case 19: GuiLoadStyleRLTech(); break;
                 default: break;
             }
 
@@ -218,7 +240,7 @@ int main()
             if (showTextInputBox) GuiLock();
 
             GuiSetStyle(TABBAR, TAB_ITEMS_WIDTH, 140);
-            GuiTabBar((Rectangle){ 0, 8, GetScreenWidth(), 26 }, tabNames, tabCount, &tabActive);
+            GuiTabBar((Rectangle){ 0, 8, GetScreenWidth(), 26 }, "#176#TAB_01;#177#TAB_02;#178#TAB_03;#179#TAB_04;#180#TAB_05;#181#TAB_06", NULL, &tabActive);
 
             // First GUI column
             //GuiSetStyle(CHECKBOX, TEXT_ALIGNMENT, TEXT_ALIGN_LEFT);
@@ -244,8 +266,9 @@ int main()
             GuiSetState(STATE_NORMAL);
             //GuiUnlock();
 
+            GuiSetStyle(COMBOBOX, COMBO_BUTTON_WIDTH, 40);
             GuiComboBox((Rectangle){ 25, 480 + 20, 125, 30 },
-                "default;Jungle;Lavanda;Dark;Bluish;Cyber;Terminal;Candy;Cherry;Ashes;Enefete;Sunny;Amber;Genesis", &visualStyleActive);
+                "default;Jungle;Lavanda;Dark;Bluish;Cyber;Terminal;Candy;Cherry;Ashes;Enefete;Sunny;Amber;Genesis;Brick;Pocket;Turbo;Wisteria;Advance;RLTech", &visualStyleActive);
 
             // NOTE: GuiDropdownBox must draw after any other control that can be covered on unfolding
             if (dropDown000EditMode || dropDown001EditMode) GuiUnlock();
@@ -257,7 +280,7 @@ int main()
             GuiSetStyle(DROPDOWNBOX, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
             GuiSetStyle(DROPDOWNBOX, TEXT_PADDING, 0);
 
-            if (GuiDropdownBox((Rectangle){ 25, 25 + 20, 125, 30 }, "ONE;TWO;THREE", &dropdownBox000Active, dropDown000EditMode)) dropDown000EditMode = !dropDown000EditMode;
+            if (GuiDropdownBox((Rectangle){ 25, 25 + 20, 125, 30 }, "#27#ONE;#28#TWO;#29#THREE", &dropdownBox000Active, dropDown000EditMode)) dropDown000EditMode = !dropDown000EditMode;
 
             // Second GUI column
             //GuiSetStyle(LISTVIEW, LIST_ITEMS_BORDER_NORMAL, 1);
@@ -306,10 +329,12 @@ int main()
             if (showMessageBox)
             {
                 DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(RAYWHITE, 0.8f));
-                int result = GuiMessageBox((Rectangle){ (float)GetScreenWidth()/2 - 125, (float)GetScreenHeight()/2 - 50, 250, 100 }, GuiIconText(ICON_EXIT, "Close Window"), "Do you really want to exit?", "Yes;No");
+                int btnActive = -1; 
+                GuiMessageBox((Rectangle){ (float)GetScreenWidth()/2 - 125, (float)GetScreenHeight()/2 - 50, 250, 100 }, 
+                    GuiIconText(ICON_EXIT, "Close Window"), "Do you really want to exit?", "Yes;No", &btnActive);
 
-                if ((result == 0) || (result == 2)) showMessageBox = false;
-                else if (result == 1) exitWindow = true;
+                if ((btnActive == 0) || (btnActive == 2)) showMessageBox = false;
+                else if (btnActive == 1) exitWindow = true;
             }
 
             if (showTextInputBox)
@@ -317,16 +342,18 @@ int main()
                 GuiUnlock();
 
                 DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(RAYWHITE, 0.8f));
-                int result = GuiTextInputBox((Rectangle){ (float)GetScreenWidth()/2 - 120, (float)GetScreenHeight()/2 - 60, 240, 140 }, GuiIconText(ICON_FILE_SAVE, "Save file as..."), "Introduce output file name:", "Ok;Cancel", textInput, 255, NULL);
+                int btnActive = -1;
+                GuiTextInputBox((Rectangle){ (float)GetScreenWidth()/2 - 120, (float)GetScreenHeight()/2 - 60, 240, 140 }, 
+                    GuiIconText(ICON_FILE_SAVE, "Save file as..."), "Introduce output file name:", textInput, 255, "Ok;Cancel", &btnActive, NULL);
 
-                if (result == 1)
+                if (btnActive == 1)
                 {
                     // TODO: Validate textInput value and save
 
                     TextCopy(textInputFileName, textInput);
                 }
 
-                if ((result == 0) || (result == 1) || (result == 2))
+                if ((btnActive == 0) || (btnActive == 1) || (btnActive == 2))
                 {
                     showTextInputBox = false;
                     TextCopy(textInput, "\0");
