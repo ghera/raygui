@@ -1802,7 +1802,8 @@ int GuiRoundedWindowBox(Rectangle bounds, const char *title, float roundness, in
                                 bounds.width + bleedMargin * 2.0f, bounds.height + bleedMargin * 2.0f};
     DrawRectangleRounded(expandedBounds, actualRoundness, segments, baseColor);
 
-    DrawRectangleRoundedLinesEx(bounds, actualRoundness, segments, borderWidth, borderColor);
+    // NOTE: Negative thickness draws the outline outside the bounds (raylib 6.2 draws positive thickness inside)
+    DrawRectangleRoundedLinesEx(bounds, actualRoundness, segments, -borderWidth, borderColor);
 
     DrawLineEx((Vector2){bounds.x, bounds.y + statusBarHeight},
                (Vector2){bounds.x + bounds.width, bounds.y + statusBarHeight},
@@ -2167,7 +2168,8 @@ int GuiRoundedButton(Rectangle bounds, const char *text, float borderWidth, floa
                                 bounds.width + bleedMargin * 2.0f, bounds.height + bleedMargin * 2.0f};
     DrawRectangleRounded(expandedBounds, roundness, segments, baseColor);
 
-    DrawRectangleRoundedLinesEx(bounds, roundness, segments, borderWidth, borderColor);
+    // NOTE: Negative thickness draws the outline outside the bounds (raylib 6.2 draws positive thickness inside)
+    DrawRectangleRoundedLinesEx(bounds, roundness, segments, -borderWidth, borderColor);
     GuiDrawText(text, GetTextBounds(BUTTON, bounds), GuiGetStyle(BUTTON, TEXT_ALIGNMENT), GetColor(GuiGetStyle(BUTTON, TEXT + (state * 3))));
 
     if (state == STATE_FOCUSED) GuiTooltip(bounds);
