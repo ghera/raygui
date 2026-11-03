@@ -287,7 +287,7 @@
 *       0.8 (27-Aug-2015) Initial release. Implemented by Kevin Gato, Daniel Nicolás and Ramon Santamaria
 *
 *   DEPENDENCIES:
-*       raylib 6.1-dev  - Inputs reading (keyboard/mouse), shapes drawing, font loading and text drawing
+*       raylib 6.2  - Inputs reading (keyboard/mouse), shapes drawing, font loading and text drawing
 *
 *   STANDALONE MODE:
 *       By default raygui depends on raylib mostly for the inputs and the drawing functionality but that dependency can be disabled
@@ -4022,13 +4022,17 @@ int GuiTabBarEx(Rectangle bounds, char **text, int count, int *hscroll, int *act
 
     int tabItemsWidth = GuiGetStyle(TABBAR, TAB_ITEMS_WIDTH);
     Rectangle tabBounds = { bounds.x, bounds.y, (float)tabItemsWidth, bounds.height };
+    
+    int prevActive = 0;
+    if (active != NULL)
+    {
+        if (*active < 0) *active = 0;
+        else if (*active > count - 1) *active = count - 1;
+        
+        prevActive = *active;
+    }
 
-    if (*active < 0) *active = 0;
-    else if (*active > count - 1) *active = count - 1;
-
-    int prevActive = (active == NULL)? 0 : *active;
-
-    int offsetX = 0;     // Required in case tabs go out of screen
+    int offsetX = 0; // Required in case tabs go out of screen
     offsetX = (*active*tabItemsWidth) - GetScreenWidth();
     if (offsetX < 0) offsetX = 0;
 
